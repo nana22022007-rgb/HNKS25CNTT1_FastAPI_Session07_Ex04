@@ -1,3 +1,36 @@
+"""
+Phần 1: Phân tích & Đề xuất đa giải pháp
+1. Phân tích Input/Output
+
+Input
+    order_id (Path Parameter): ID đơn hàng cần tra cứu.
+
+Output
+    Thành công (200 OK): Trả về thông tin thanh toán của đơn hàng.
+    Thất bại:
+    404 Not Found: Không tìm thấy đơn hàng.
+    500 Internal Server Error: Có lỗi hệ thống, trả về thông báo thân thiện.
+
+        
+2. Đề xuất giải pháp
+
+Giải pháp 1: Dùng List
+    Lưu dữ liệu trong orders_list.
+    Duyệt từng phần tử để tìm order_id.
+
+Giải pháp 2: Dùng Dict
+| Tiêu chí         | Duyệt List  | Dùng Dict    |
+| ---------------- | ----------- | ------------ |
+| Tốc độ tìm kiếm  | Chậm (O(n)) | Nhanh (O(1)) |
+| Bộ nhớ           | Ít hơn      | Nhiều hơn    |
+| Độ dễ hiểu       | Dễ          | Dễ           |
+| Khả năng bảo trì | Trung bình  | Tốt          |
+| Bối cảnh phù hợp | Dữ liệu nhỏ | Dữ liệu lớn  |
+
+
+Kết luận: Chọn Dict vì tra cứu nhanh, phù hợp hệ thống có nhiều đơn hàng.
+"""
+
 from fastapi import FastAPI, HTTPException
 
 app = FastAPI()
