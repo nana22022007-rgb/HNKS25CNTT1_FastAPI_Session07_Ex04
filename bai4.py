@@ -31,7 +31,8 @@ Giải pháp 2: Dùng Dict
 Kết luận: Chọn Dict vì tra cứu nhanh, phù hợp hệ thống có nhiều đơn hàng.
 """
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, status, Request
+from fastapi.responses import JSONResponse
 
 app = FastAPI()
 
@@ -40,24 +41,24 @@ orders_dict = {
     2: {"code": "SP002", "payment_status": "UNPAID", "method": "NONE"}
 }
 
-@app.get("/orders/{order_id}/payment")
+@app.exception_handler(Exception)
+async def handle_exception(request: Request, exc: Exception):
+    return JSONResponse(
+        status_code=500,
+        content={
+            "detail": "Đã xảy ra lỗi hệ thống, vui lòng thử lại sau."
+        }
+    )
+
+@app.get("/orders/{order_id}/payment", status_code=status.HTTP_200_OK)
 def get_payment(order_id: int):
-    try:
-        order = orders_dict.get(order_id)
 
-        if order is None:
-            raise HTTPException(
-                status_code=404,
-                detail="Không tìm thấy đơn hàng"
-            )
+    order = orders_dict.get(order_id)
 
-        return order
-
-    except HTTPException:
-        raise
-
-    except Exception:
+    if not order:
         raise HTTPException(
-            status_code=500,
-            detail="Đã xảy ra lỗi hệ thống, vui lòng thử lại sau."
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Không tìm thấy đơn hàng"
         )
+
+    return order
